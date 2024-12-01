@@ -1,0 +1,53 @@
+def api(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()  # Retorna os dados em formato JSON
+    else:
+        print(f'O erro foi {response.status_code}')  # Informa o erro
+        return None  # Retorna None se houver erro
+
+response_prod = api(url_prod)
+
+
+
+
+
+if response.status_code == 200:
+    dados_json = response.json()
+    dados_site = {}
+    for item in dados_json:
+        nome_do_site = item['Company']
+        if nome_do_site not in dados_site:
+            dados_site[nome_do_site] = []
+        
+        dados_site[nome_do_site].append({
+            "item": item['Item'],
+            "price": item['price'],
+            "description": item['description']
+        })
+
+
+else: 
+    print(f'O erro foi {response.status_code}')
+
+for nome_do_site, dados in dados_site.items():
+    nome_do_arquivo = f'{nome_do_site}.json'
+    with open(nome_do_arquivo,'w') as arquivo_site:
+        json.dump(dados,arquivo_site,indent=4)
+
+
+url_proc = 'http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_03'
+url_com = 'http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_04'
+url_imp = 'http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_05'
+url_exp = 'http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_06'
+url_publi = 'http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_07'
+
+# def api(url):
+#     response = requests.get(url)
+#     if response.status_code == 200:
+#         return response.json()  # Retorna os dados em formato JSON
+#     else:
+#         print(f'O erro foi {response.status_code}')  # Informa o erro
+#         return None  # Retorna None se houver erro
+
+# response_prod = api(url_prod)

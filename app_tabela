@@ -1,0 +1,33 @@
+import requests
+from bs4 import BeautifulSoup
+from flask import Flask, jsonify
+
+url_prod = 'http://vitibrasil.cnpuv.embrapa.br/index.php?opcao=opt_02'
+
+app = Flask(__name__)
+
+def get_table_data(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        table = soup.find('table')  # Supondo que os dados estejam em uma tabela
+        if table:
+            headers = [header.text.strip() for header in table.find_all('th')]
+            rows = []
+            for row in table.find_all('tr'):
+                cols = [col.text.strip() for col in row.find_all(['td', 'th'])]
+                if cols:
+                    rows.append(cols)
+            return {"headers": headers, "rows": rows}
+        else:
+            return {"error": "Tabela não encontrada na página."}
+    else:
+        return {"error": f"Erro ao acessar a página: {response.status_code}"}
+
+@app.route('/fetch-data', methods=['GET'])
+def fetch_data():
+    data = get_table_data(url_prod)
+    return jsonify(data)
+
+if __name__ == '__main__':
+    app.run(debug=True)
